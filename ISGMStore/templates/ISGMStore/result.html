@@ -1,0 +1,12 @@
+{% extends 'ISGMStore/base.html' %}
+{% block content %}
+	
+{% endblock %}
+{% block script %}
+{% if error_message %}
+	$('#paypal-cart').submit();
+{% else %}
+	paypal.minicart.reset();
+	window.location.replace("{{ redirect_url }}");
+{% endif %}
+{% endblock %}

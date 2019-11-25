@@ -1,0 +1,71 @@
+{% extends 'ISGMStore/base.html' %}
+{% block content %}
+
+<!-- about -->
+		<div class="privacy about">
+			{% if request.GET.error_message %}
+				<h4>{{ request.GET.error_message }}</h4>
+			{% endif %}
+			<h3>Invoice</h3>
+			
+	      <div class="checkout-right" id="checkoutTbl">
+					<h4>Order No : {{ invoice.id }}, Ordered Time : {{ invoice.order_time }}</h4>
+				<table class="timetable_sub">
+					<thead>
+						<tr>
+							<th>Id</th>	
+							<th>Image</th>
+							<th>Product Name</th>
+							<th>Quantity</th>
+							<th>Original Price</th>
+							<th>Discount Amount</th>
+							<th>Total Price</th>
+                            <th>Order Status</th>
+<!-- 							<th>Remove</th> -->
+						</tr>
+					</thead>
+					<tbody id="checkout_table">
+					
+					{% for order in invoice.order_history_set.all %}
+						<tr class="rem1">
+							<td class="invert">{{ order.item.id }}</td>
+							<td class="invert-image"><img style="width:150px;height:100px;" src="{{ order.item.item_image.url }}" alt=" " class="img-responsive"></td>
+							<td class="invert">{{ order.item.item_name }}</td>
+							<td class="invert">{{ order.quantity }}</td>
+							<td class="invert">{{ order.original_price }}</td>
+							<td class="invert">{{ order.discount }}</td>
+                            <td class="invert">{{ order.total_price }}</td>
+                            <td class="invert">{{ order.order_status }}</td>
+
+<!-- 							<td class="invert"> -->
+<!-- 								<div class="rem"> -->
+<!-- 									<div class="close1"> </div> -->
+<!-- 								</div> -->
+	
+<!-- 							</td> -->
+						</tr>
+				{% endfor %}
+				
+				</tbody>
+				<tfoot>
+					<tr>
+						<td class="invert" colspan="5">Total : {{ total_cost }}</td>
+						<td class="invert" colspan="3"><button class="btn btn-primary" >Print Your Invoice</button></td>
+					</tr>
+				</tfoot>
+				</table>
+			</div>
+			<div class="checkout-left">	
+				
+				
+			</div>
+			
+				<div class="clearfix"> </div>
+				
+			</div>
+
+
+{% endblock %}
+{% block script %}
+	
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'ISGMStore/base.html' %}
+{% load mathfilters %}
+{% if user.is_authenticated %}
+{% block content %}
+    <style>
+        .popover-content{
+            max-width: 100%;
+        }
+        .item:hover .image{
+            display: none;
+        }
+        .div{
+            display: none;
+        }
+        .item:hover .div{
+            display: inherit;
+        }
+    </style>
+<div class="w3ls_w3l_banner_nav_right_grid">
+				<div class="w3ls_w3l_banner_nav_right_grid1">
+					<h6>{{ category.category_name }}</h6>
+					{% for item in items %}
+					<div class="col-md-3 w3ls_w3l_banner_left">
+						<div class="hover14 column">
+						<div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
+							
+							<div class="agile_top_brand_left_grid1">
+								<figure>
+									<div class="snipcart-item block">
+										<div class="snipcart-thumb">
+{#                                              <img style="width:200px;height:150px" src="{{ item.item_image.url }}" alt=" " class="img-responsive" role="button" data-toggle="popover" data-trigger="focus"#}
+{#                                              data-html="true" data-container="body" title="Detail Images" data-placement="top" data-content='<p>Hello World</p>'>#}
+                                            <div class="item">
+                                            <img style="width:200px;height:150px;" src="{{ item.item_image.url }}" alt=" " class="img-responsive image" />
+                                            <div class="div">
+                                                <img style="width:200px;height:150px" src="{{ item.item_image.url }}" alt=" " class="img-responsive" />
+                                                <img style="width:200px;height:150px" src="{{ item.item_image_side.url }}" alt=" " class="img-responsive" />
+                                                <img style="width:200px;height:150px" src="{{ item.item_image_back.url }}" alt=" " class="img-responsive" />
+                                            </div>
+                                            </div>
+                                            <p>{{ item.item_name }}</p>
+											{% if item.discount > 0 or category.discount > 0 or user.customer.discount > 0 %}
+											<h4>{% with customer_dis_amt=item.price|mul:user.customer.get_discount_ratio %} {% with total_dis_amt=customer_dis_amt|add:item.get_discount_amount %}{{ item.price|sub:total_dis_amt }}{% endwith %}{% endwith %} <span>{{ item.price }}</span></h4>
+											{% else %}
+											<h4>{{ item.price }}</h4>
+											{% endif %}
+											Quantity <input class="form-control" type="number" id="qty_{{ item.id }}" value="1" />
+											<input type="hidden" id="item_name_{{ item.id }}" name="item_name" value="{{ item.item_name }}" />
+											<input type="hidden" id="amount_{{ item.id }}" name="amount" value="{{ item.price }}" />
+											{% with customer_dis_amt=item.price|mul:user.customer.get_discount_ratio %} {% with total_dis_amt=customer_dis_amt|add:item.get_discount_amount %}
+											<input type="hidden" id="discount_{{ item.id }}" name="discount_amount" value="{{ total_dis_amt }}" />
+											{% endwith %}{% endwith %}
+										</div>
+										<div class="snipcart-details">
+											<form action="#" method="post">
+												<input type="button" name="submit" onclick="addItem({{ item.id }});" value="Add to cart" class="button" />
+											</form>
+{#                                            <img style="width:200px;height:150px" src="{{ item.item_image.url }}" data-container="body" data-toggle="popover" data-html="true" data-placement="top" data-content='<span><img style="width:200px;height:150px;" src="{{ item.item_image_side.url }}" alt=" " class="img-responsive" /></span><span><img style="width:200px;height:150px;" src="{{ item.item_image.url }}" alt=" " class="img-responsive" /></span>' />#}
+
+										</div>
+									</div>
+								</figure>
+							</div>
+						</div>
+						</div>
+					</div>
+					{% endfor %}
+					{% if items.has_other_pages %}
+						<div class="col-md-12" style="text-align:center">
+						  <ul class="pagination">
+						  	<li><a href="?page_no=1">First</a></li>
+						    {% if items.has_previous %}
+						      <li><a href="?page_no={{ items.previous_page_number }}">&laquo;</a></li>
+						    {% else %}
+						      <li class="disabled"><span>&laquo;</span></li>
+						    {% endif %}
+						    {% for i in items.paginator.page_range %}
+						      {% if items.number == i %}
+						        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+						      {% else %}
+						        <li><a href="?page_no={{ i }}">{{ i }}</a></li>
+						      {% endif %}
+						    {% endfor %}
+						    {% if items.has_next %}
+						      <li><a href="?page_no={{ items.next_page_number }}">&raquo;</a></li>
+						    {% else %}
+						      <li class="disabled"><span>&raquo;</span></li>
+						    {% endif %}
+						    <li><a href="?page_no={{ items.paginator.num_pages }}">Last</a></li>
+						  </ul>
+						</div>
+					{% endif %}
+					
+					<div class="clearfix"> </div>
+				</div>
+				
+				
+			</div>
+{% endblock %}
+{% block script %}
+    function showImg(img, div){
+        $('#'+img).hide();
+        $('#'+div).show();
+        console.log("Show Img");
+    }
+    function hideImg(img, div){
+        $('#'+div).hide();
+        $('#'+img).show();
+        console.log("Hide Img");
+    }
+	function addItem(id){
+		var item = {
+			"item_number" : id,
+			"quantity" : $('#qty_'+id).val(),
+			"item_name" : $('#item_name_'+id).val(),
+			"amount" : $('#amount_'+id).val(),
+			"discount_amount" : $('#discount_'+id).val(),
+			"currency_code" : "USD"
+		};
+		paypal.minicart.cart.add(item);
+		console.log(paypal.minicart.cart.items());
+	}
+{% endblock %}
+{% endif %}

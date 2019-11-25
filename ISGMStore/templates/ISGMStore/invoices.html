@@ -1,0 +1,44 @@
+{% extends 'ISGMStore/base.html' %}
+{% block content %}
+
+<!-- about -->
+		<div class="privacy about">
+			{% if request.GET.error_message %}
+				<h4>{{ request.GET.error_message }}</h4>
+			{% endif %}
+			<h3>Chec<span>kout</span></h3>
+			
+	      <div class="checkout-right" id="checkoutTbl">
+				<table class="timetable_sub">
+					<thead>
+						<tr>
+							<th>Order No</th>	
+							<th>Order Time</th>
+						</tr>
+					</thead>
+					<tbody id="checkout_table">
+					
+					{% for invoice in invoices %}
+						<tr class="rem1">
+							<td class="invert">{{ invoice.id }}</td>
+							<td class="invert"><a href="{% url 'ISGMStore:invoice' invoice.id %}">{{ invoice.order_time }}</a></td>
+						</tr>
+				{% endfor %}
+				
+				</tbody>
+				</table>
+			</div>
+			<div class="checkout-left">	
+				
+				
+			</div>
+			
+				<div class="clearfix"> </div>
+				
+			</div>
+
+
+{% endblock %}
+{% block script %}
+	
+{% endblock %}

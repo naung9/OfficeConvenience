@@ -1,0 +1,77 @@
+{% extends 'ISGMStore/base.html' %}
+{% block content %}
+
+<!-- about -->
+		<div class="privacy about">
+			{% if request.GET.error_message %}
+				<h4>{{ request.GET.error_message }}</h4>
+			{% endif %}
+			<h3>Chec<span>kout</span></h3>
+			
+	      <div class="checkout-right" id="checkoutTbl">
+					<h4>Your shopping cart contains: <span>{{ checkout_items|length }} Products</span></h4>
+				<form action="confirm_checkout" id="checkout" name="checkout" method="POST">
+				<table class="timetable_sub">
+					<thead>
+						<tr>
+							<th>Id</th>	
+							<th>Image</th>
+							<th>Product Name</th>
+							<th>Quantity</th>
+							<th>Original Price</th>
+							<th>Discount Amount</th>
+							<th>Total Price</th>
+<!-- 							<th>Remove</th> -->
+						</tr>
+					</thead>
+					<tbody id="checkout_table">
+					
+					{% csrf_token %}
+					{% for item in checkout_items %}
+						<tr class="rem1">
+							<td class="invert">{{ item.id }}</td>
+							<td class="invert-image"><img style="width:150px;height:100px;" src="{{ item.image_url }}" alt=" " class="img-responsive"></td>
+							<td class="invert">{{ item.item_name }}</td>
+							<td class="invert"><input style="width:80px;" type="number" class="form-control" name="quantity_{{ forloop.counter }}" value="{{ item.quantity }}" /></td>
+							<td class="invert">{{ item.price }}</td>
+							<td class="invert">{{ item.discount_amount }}</td>
+							<td class="invert">{{ item.total_price }}</td>
+<!-- 							<td class="invert"> -->
+<!-- 								<div class="rem"> -->
+<!-- 									<div class="close1"> </div> -->
+<!-- 								</div> -->
+	
+<!-- 							</td> -->
+						</tr>
+					<input type="hidden" name="quantity_{{ forloop.counter }}" value="{{ item.quantity }}">
+					<input type="hidden" name="price_{{ forloop.counter }}" value="{{ item.price }}">
+					<input type="hidden" name="discount_{{ forloop.counter }}" value="{{ item.discount_amount }}">
+					<input type="hidden" name="item_id_{{ forloop.counter }}" value="{{ item.id }}">
+				{% endfor %}
+				<input type="hidden" name="total_order" value="{{ checkout_items|length }}">
+				<input type="hidden" name="total_cost" value="{{ total_cost }}">
+				
+				</tbody>
+				<tfoot>
+					<tr>
+						<td class="invert" colspan="5">Total : {{ total_cost }}</td>
+						<td class="invert" colspan="3"><button class="btn btn-primary" type="submit" form="checkout" >Confirm Your Order</button></td>
+					</tr>
+				</tfoot>
+				</table>
+				</form>
+			</div>
+			<div class="checkout-left">	
+				
+				
+			</div>
+			
+				<div class="clearfix"> </div>
+				
+			</div>
+
+
+{% endblock %}
+{% block script %}
+	
+{% endblock %}

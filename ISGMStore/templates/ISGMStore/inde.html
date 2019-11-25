@@ -1,0 +1,72 @@
+{% extends 'ISGMStore/base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% block content %}
+
+<div class="top-brands">
+		<div class="container">
+			{% if error_message %}
+			<h1>{{ error_message }}</h1>
+			{% endif %}
+			<h3>Hot Offers</h3>
+<div class="w3ls_w3l_banner_nav_right_grid">
+				<div class="w3ls_w3l_banner_nav_right_grid1">
+					{% for item in item_list %}
+					<div class="col-md-3 w3ls_w3l_banner_left">
+						<div class="hover14 column">
+						<div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
+							
+							<div class="agile_top_brand_left_grid1">
+								<figure>
+									<div class="snipcart-item block">
+										<div class="snipcart-thumb">
+											<img style="width:200px;height:150px" src="{{ item.item_image.url }}" alt=" " class="img-responsive" />
+											<p>{{ item.item_name }}</p>
+											<p>Category : {{ item.category.category_name }}</p>
+											{% if item.discount > 0 or category.discount > 0 or user.customer.discount > 0 %}
+											<h4>{% with customer_dis_amt=item.price|mul:user.customer.get_discount_ratio %} {% with total_dis_amt=customer_dis_amt|add:item.get_discount_amount %}{{ item.price|sub:total_dis_amt }}{% endwith %}{% endwith %} <span>{{ item.price }}</span></h4>
+											{% else %}
+											<h4>{{ item.price }}</h4>
+											{% endif %}
+											Quantity <input class="form-control" type="number" id="qty_{{ item.id }}" value="1" />
+											<input type="hidden" id="item_name_{{ item.id }}" name="item_name" value="{{ item.item_name }}" />
+											<input type="hidden" id="amount_{{ item.id }}" name="amount" value="{{ item.price }}" />
+											{% with customer_dis_amt=item.price|mul:user.customer.get_discount_ratio %} {% with total_dis_amt=customer_dis_amt|add:item.get_discount_amount %}
+											<input type="hidden" id="discount_{{ item.id }}" name="discount_amount" value="{{ total_dis_amt }}" />
+											{% endwith %}{% endwith %}
+										</div>
+										<div class="snipcart-details">
+											<form action="#" method="post">
+												<input type="button" name="submit" onclick="addItem({{ item.id }});" value="Add to cart" class="button" />
+											</form>
+										</div>
+									</div>
+								</figure>
+							</div>
+							<div class="agile_top_brand_left_grid_pos"><img src="{% static 'ISGMStore/images/offer.png' %}" alt=" " class="img-responsive" /></div>
+						</div>
+						</div>
+					</div>
+					{% endfor %}
+					
+					
+					<div class="clearfix"> </div>
+				</div>
+			</div>
+		</div>
+		</div>
+{% endblock %}
+{% block script %}
+	function addItem(id){
+		var item = {
+			"item_number" : id,
+			"quantity" : $('#qty_'+id).val(),
+			"item_name" : $('#item_name_'+id).val(),
+			"amount" : $('#amount_'+id).val(),
+			"discount_amount" : $('#discount_'+id).val(),
+			"currency_code" : "USD"
+		};
+		paypal.minicart.cart.add(item);
+		console.log(paypal.minicart.cart.items());
+	}
+{% endblock %}
